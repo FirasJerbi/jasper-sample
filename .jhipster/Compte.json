@@ -1,0 +1,28 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipName": "user_account",
+            "otherEntityName": "user",
+            "relationshipType": "one-to-one",
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "compte"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "solde",
+            "fieldType": "Float"
+        },
+        {
+            "fieldName": "creationDate",
+            "fieldType": "LocalDate"
+        }
+    ],
+    "changelogDate": "20170511005323",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "compte",
+    "pagination": "pager"
+}
