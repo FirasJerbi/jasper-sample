@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the Compte entity.
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public interface CompteRepository extends JpaRepository<Compte,Long> {
 
 }

@@ -1,8 +1,13 @@
 package tn.insat.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
+import tn.insat.Reports.compteReportGenerator;
 import tn.insat.domain.Compte;
 
+import tn.insat.domain.CompteMin;
 import tn.insat.repository.CompteRepository;
 import tn.insat.web.rest.util.HeaderUtil;
 import tn.insat.web.rest.util.PaginationUtil;
@@ -17,10 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 
 /**
  * REST controller for managing Compte.
@@ -32,7 +38,7 @@ public class CompteResource {
     private final Logger log = LoggerFactory.getLogger(CompteResource.class);
 
     private static final String ENTITY_NAME = "compte";
-        
+
     private final CompteRepository compteRepository;
 
     public CompteResource(CompteRepository compteRepository) {
@@ -92,6 +98,54 @@ public class CompteResource {
     public ResponseEntity<List<Compte>> getAllComptes(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Comptes");
         Page<Compte> page = compteRepository.findAll(pageable);
+        /*List<Compte> l=compteRepository.findAll();
+        compteReportGenerator c=new compteReportGenerator();*/
+
+        /*try {
+            String report = "G:/account.jasper";
+
+            InputStream jasperStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(report);
+            if (jasperStream==null)System.out.println("--------------!---------");
+            else System.out.println("!!!!!!!!!!!!!!!!!!");
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperStream);
+
+            JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(compteRepository.findAll());
+            HashMap params = new HashMap();
+            JasperPrint jprint = JasperFillManager.fillReport(jasperReport, params, ds);
+            JasperExportManager.exportReportToPdfFile(jprint,"/src/main/resources/reports.pdf");
+        } catch (JRException e) {
+            e.printStackTrace();
+        }*/
+
+        HashMap params = new HashMap();
+        List<Compte> c=compteRepository.findAll();
+        List<CompteMin> cm = new ArrayList<>();
+        CompteMin compteMin;
+        for (Compte o: c){
+
+            compteMin = new CompteMin();
+            compteMin.setId(o.getId());
+            Date date = Date.from(o.getCreationDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            compteMin.setCreationDate(date);
+            compteMin.setSolde(o.getSolde());
+            compteMin.setUser_account(o.getUser_account().getId());
+
+            cm.add(compteMin);
+        }
+
+
+        try {
+            JasperReport jasperReport = JasperCompileManager.compileReport("account.jrxml");
+            if (jasperReport==null)System.out.println("--------------!---------");
+            else System.out.println("!!!!!!!!!!!!!!!!!!");
+            JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(cm);
+            JasperPrint jprint = JasperFillManager.fillReport(jasperReport, params, ds) ;
+            JasperExportManager.exportReportToPdfFile(jprint,"reports.pdf");
+
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/comptes");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

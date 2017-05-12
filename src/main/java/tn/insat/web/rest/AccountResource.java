@@ -2,6 +2,7 @@ package tn.insat.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 
+
 import tn.insat.domain.User;
 import tn.insat.repository.UserRepository;
 import tn.insat.security.SecurityUtils;
@@ -117,6 +118,7 @@ public class AccountResource {
             .map(user -> new ResponseEntity<>(new UserDTO(user), HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
     }
+
 
     /**
      * POST  /account : update the current user information.
