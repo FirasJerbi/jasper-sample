@@ -1,9 +1,8 @@
 package tn.insat.domain;
 
 
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.Objects;
+
 
 /**
  * Created by My session on 11/05/2017.
@@ -12,7 +11,24 @@ public class CompteMin {
     private Long id;
     private Float solde;
     private Date creationDate;
-    private Long user_account;
+    private String user_account_firstName;
+    private String user_account_lastName;
+
+    public void setUser_account_firstName(String user_account_firstName) {
+        this.user_account_firstName = user_account_firstName;
+    }
+
+    public void setUser_account_lastName(String user_account_lastName) {
+        this.user_account_lastName = user_account_lastName;
+    }
+
+    public String getUser_account_firstName() {
+        return user_account_firstName;
+    }
+
+    public String getUser_account_lastName() {
+        return user_account_lastName;
+    }
 
     public Date getCreationDate() {
         return creationDate;
@@ -22,13 +38,6 @@ public class CompteMin {
         this.creationDate = creationDate;
     }
 
-    public Long getUser_account() {
-        return user_account;
-    }
-
-    public void setUser_account(Long user_account) {
-        this.user_account = user_account;
-    }
 
     public Long getId() {
         return id;
