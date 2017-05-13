@@ -98,46 +98,23 @@ public class CompteResource {
     public ResponseEntity<List<Compte>> getAllComptes(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Comptes");
         Page<Compte> page = compteRepository.findAll(pageable);
-        /*List<Compte> l=compteRepository.findAll();
-        compteReportGenerator c=new compteReportGenerator();*/
-
-        /*try {
-            String report = "G:/account.jasper";
-
-            InputStream jasperStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(report);
-            if (jasperStream==null)System.out.println("--------------!---------");
-            else System.out.println("!!!!!!!!!!!!!!!!!!");
-            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperStream);
-
-            JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(compteRepository.findAll());
-            HashMap params = new HashMap();
-            JasperPrint jprint = JasperFillManager.fillReport(jasperReport, params, ds);
-            JasperExportManager.exportReportToPdfFile(jprint,"/src/main/resources/reports.pdf");
-        } catch (JRException e) {
-            e.printStackTrace();
-        }*/
 
         HashMap params = new HashMap();
         List<Compte> c=compteRepository.findAll();
         List<CompteMin> cm = new ArrayList<>();
         CompteMin compteMin;
         for (Compte o: c){
-
             compteMin = new CompteMin();
             compteMin.setId(o.getId());
             Date date = Date.from(o.getCreationDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
             compteMin.setCreationDate(date);
             compteMin.setSolde(o.getSolde());
-            compteMin.setUser_account(o.getUser_account().getId());
-
+            compteMin.setUser_account_firstName(o.getUser_account().getFirstName());
+            compteMin.setUser_account_lastName(o.getUser_account().getLastName());
             cm.add(compteMin);
         }
-
-
         try {
             JasperReport jasperReport = JasperCompileManager.compileReport("account.jrxml");
-            if (jasperReport==null)System.out.println("--------------!---------");
-            else System.out.println("!!!!!!!!!!!!!!!!!!");
             JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(cm);
             JasperPrint jprint = JasperFillManager.fillReport(jasperReport, params, ds) ;
             JasperExportManager.exportReportToPdfFile(jprint,"reports.pdf");
