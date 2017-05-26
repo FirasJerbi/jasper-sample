@@ -1,10 +1,10 @@
 package tn.insat.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.util.JRLoader;
-import tn.insat.Reports.compteReportGenerator;
+
 import tn.insat.domain.Compte;
 
 import tn.insat.domain.CompteMin;
@@ -22,11 +22,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.util.*;
+import java.sql.Date;
 
 /**
  * REST controller for managing Compte.
@@ -93,12 +94,13 @@ public class CompteResource {
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of comptes in body
      */
+
+
     @GetMapping("/comptes")
     @Timed
     public ResponseEntity<List<Compte>> getAllComptes(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Comptes");
         Page<Compte> page = compteRepository.findAll(pageable);
-
         HashMap params = new HashMap();
         List<Compte> c=compteRepository.findAll();
         List<CompteMin> cm = new ArrayList<>();
@@ -106,17 +108,18 @@ public class CompteResource {
         for (Compte o: c){
             compteMin = new CompteMin();
             compteMin.setId(o.getId());
-            Date date = Date.from(o.getCreationDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date date = Date.valueOf(o.getCreationDate());
             compteMin.setCreationDate(date);
+            compteMin.setLogin(o.getUser_account().getLogin());
+            compteMin.setEmail(o.getUser_account().getEmail());
             compteMin.setSolde(o.getSolde());
-            compteMin.setUser_account_firstName(o.getUser_account().getFirstName());
-            compteMin.setUser_account_lastName(o.getUser_account().getLastName());
             cm.add(compteMin);
         }
+
         try {
-            JasperReport jasperReport = JasperCompileManager.compileReport("account.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport("account2.jrxml");
             JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(cm);
-            JasperPrint jprint = JasperFillManager.fillReport(jasperReport, params, ds) ;
+            JasperPrint jprint = JasperFillManager.fillReport(jasperReport, params,ds) ;
             JasperExportManager.exportReportToPdfFile(jprint,"reports.pdf");
 
         } catch (JRException e) {

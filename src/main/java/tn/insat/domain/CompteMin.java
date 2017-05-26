@@ -1,33 +1,32 @@
 package tn.insat.domain;
 
 
-import java.util.Date;
-
+import java.sql.Date;
 
 /**
  * Created by My session on 11/05/2017.
  */
 public class CompteMin {
     private Long id;
-    private Float solde;
     private Date creationDate;
-    private String user_account_firstName;
-    private String user_account_lastName;
+    private String Login;
+    private String email;
+    private Float solde;
 
-    public void setUser_account_firstName(String user_account_firstName) {
-        this.user_account_firstName = user_account_firstName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUser_account_lastName(String user_account_lastName) {
-        this.user_account_lastName = user_account_lastName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getUser_account_firstName() {
-        return user_account_firstName;
+    public String getLogin() {
+        return Login;
     }
 
-    public String getUser_account_lastName() {
-        return user_account_lastName;
+    public void setLogin(String login) {
+        Login = login;
     }
 
     public Date getCreationDate() {
